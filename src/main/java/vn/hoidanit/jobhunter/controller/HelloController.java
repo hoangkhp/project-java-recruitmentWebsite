@@ -6,8 +6,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class HelloController {
 
+    // @GetMapping("/")
+    // public String getHelloWorld() {
+    //     return "Hello World (Hỏi Dân IT & Eric)";
+    // }
+
     @GetMapping("/")
-    public String getHelloWorld() {
-        return "Hello World (Hỏi Dân IT & Eric)";
+    public String getKing(){
+        return "Hoang la King";
     }
 }
