@@ -1,8 +1,10 @@
 package vn.hoidanit.jobhunter.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.*;
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.service.UserService;
+import vn.hoidanit.jobhunter.service.error.IdInvalidException;
+
 import org.springframework.web.bind.annotation.RequestParam;
 
 
@@ -25,40 +29,48 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/user")
-    public User createNewUser(
+    @PostMapping("users")
+    public ResponseEntity<User> createNewUser(
         @RequestBody User postmanUser 
         ) {
         User createUser = this.userService.saveUser(postmanUser);
-        return createUser;
+        return ResponseEntity.status(HttpStatus.CREATED).body(createUser);
     }
 
-    @DeleteMapping("/user/{id}")
-    public String createNewUser(
+    @ExceptionHandler(value = IdInvalidException.class)
+    public ResponseEntity<String> handleIdException(IdInvalidException idException) {
+        return ResponseEntity.badRequest().body(idException.getMessage());
+    }
+
+    @DeleteMapping("users/{id}")
+    public ResponseEntity<String> createNewUser(
         @PathVariable("id") Long id
-    ){
+    ) throws IdInvalidException{
+        if(id >= 1500){
+            throw new IdInvalidException("Id không lớn hơn hoặc bằng 100");
+        }
         this.userService.handleDeleteUser(id);
-        return "delete User";
+        return ResponseEntity.status(HttpStatus.OK).body("Delete User Successfully");
     }
 
-    @GetMapping("/user/{id}")
-    public User readAUser(
+    @GetMapping("users/{id}")
+    public ResponseEntity<User> readAUser(
         @PathVariable("id") Long id
     ){
         User getUser = this.userService.handleGetAUser(id);
-        return getUser;
+        return ResponseEntity.status(HttpStatus.OK).body(getUser);
     }
 
-    @GetMapping("/user")
-    public List<User> readAllUser() {
+    @GetMapping("users")
+    public ResponseEntity<List<User>> readAllUser() {
         List<User> listAllUser = this.userService.handleGetAllUser();
-        return listAllUser;
+        return ResponseEntity.status(HttpStatus.OK).body(listAllUser);
     }
     
-    @PutMapping("/user")
-    public String updateAUser(@RequestBody User updateUser) {
+    @PutMapping("users")
+    public ResponseEntity<String> updateAUser(@RequestBody User updateUser) {
         this.userService.handleUpdateUser(updateUser);
-        return "update User thành công";
+        return ResponseEntity.status(HttpStatus.OK).body("Update User successfully");
         
     }
     
