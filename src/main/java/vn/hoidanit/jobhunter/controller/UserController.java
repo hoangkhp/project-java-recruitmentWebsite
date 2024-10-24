@@ -37,11 +37,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createUser);
     }
 
-    @ExceptionHandler(value = IdInvalidException.class)
-    public ResponseEntity<String> handleIdException(IdInvalidException idException) {
-        return ResponseEntity.badRequest().body(idException.getMessage());
-    }
-
+    
     @DeleteMapping("users/{id}")
     public ResponseEntity<String> createNewUser(
         @PathVariable("id") Long id
