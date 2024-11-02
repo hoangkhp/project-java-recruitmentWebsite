@@ -43,6 +43,10 @@ public class UserService {
             userUpdate = this.userRepository.save(userUpdate);
         }
         return userUpdate;  
+    }
+
+    public User handleGetUserByUserName(String username) {
+        return this.userRepository.findByEmail(username);
     } 
     
 
