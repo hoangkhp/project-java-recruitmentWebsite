@@ -36,7 +36,7 @@ public class AuthController {
         RestLoginDTO res = new RestLoginDTO();
         res.setAccessToken(access_token);
         //nạp thông tin (nếu xử lý thành công) vào SecurityContext
-        // SecurityContextHolder.getContext().setAuthentication(authentication);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return ResponseEntity.ok().body(res);
     }
