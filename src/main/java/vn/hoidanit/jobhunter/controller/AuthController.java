@@ -11,27 +11,33 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import vn.hoidanit.jobhunter.domain.dto.LoginDTO;
+import vn.hoidanit.jobhunter.domain.dto.RestLoginDTO;
+import vn.hoidanit.jobhunter.util.SecurityUtil;
 
 @RestController
 public class AuthController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final SecurityUtil securityUtil;
 
-    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder) {
+    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
+        this.securityUtil = securityUtil;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginDTO> login(@Valid @RequestBody LoginDTO loginDTO){
+    public ResponseEntity<RestLoginDTO> login(@Valid @RequestBody LoginDTO loginDTO){
         //Nạp input gồm username/password vào Security
         UsernamePasswordAuthenticationToken authenticationToken 
         = new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword());
 
         //xác thực người dùng => cần viết hàm loadUserByUsername
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
+        String access_token = this.securityUtil.createToken(authentication);
+        RestLoginDTO res = new RestLoginDTO();
+        res.setAccessToken(access_token);
         //nạp thông tin (nếu xử lý thành công) vào SecurityContext
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        // SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return ResponseEntity.ok().body(loginDTO);
+        return ResponseEntity.ok().body(res);
     }
 }
