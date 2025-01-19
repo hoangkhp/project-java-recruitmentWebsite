@@ -45,6 +45,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(
                         authz -> authz
                                 .requestMatchers("/", "/login").permitAll()
+                                .requestMatchers("/companies").authenticated()
                                 .anyRequest().authenticated()
                                 // .anyRequest().permitAll()
                                 

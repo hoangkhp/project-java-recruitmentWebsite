@@ -2,17 +2,24 @@ package vn.hoidanit.jobhunter.domain;
 
 import java.time.Instant;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import vn.hoidanit.jobhunter.util.SecurityUtil;
 
-@Entity
 @Table(name = "companies")
+@Entity
 @Getter
 @Setter
 public class Company {
@@ -20,6 +27,7 @@ public class Company {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @NotBlank(message = "Don't leave this by null value")
     private String name;
 
     @Column(columnDefinition = "MEDIUMTEXT")
@@ -29,6 +37,7 @@ public class Company {
 
     private String logo;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
     private Instant createAt;
 
     private Instant updateAt;
@@ -37,5 +46,16 @@ public class Company {
 
     private String updateBy;
 
+    @PrePersist
+    void beforeSaveCompany(){
+        this.createBy = SecurityUtil.getCurrentUserLogin().isPresent() == true ? SecurityUtil.getCurrentUserLogin().get() : "";
+        this.createAt = Instant.now();
 
+    }
+
+    @PreUpdate
+    public void handleBeforeUpdate(){
+        this.updateBy = SecurityUtil.getCurrentUserLogin().isPresent() == true ? SecurityUtil.getCurrentUserLogin().get() :"";
+        this.updateAt = Instant.now();
+    }
 }

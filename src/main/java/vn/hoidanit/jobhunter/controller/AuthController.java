@@ -33,10 +33,12 @@ public class AuthController {
         //xác thực người dùng => cần viết hàm loadUserByUsername
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         String access_token = this.securityUtil.createToken(authentication);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        
         RestLoginDTO res = new RestLoginDTO();
         res.setAccessToken(access_token);
         //nạp thông tin (nếu xử lý thành công) vào SecurityContext
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        
 
         return ResponseEntity.ok().body(res);
     }

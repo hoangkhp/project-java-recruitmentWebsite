@@ -1,5 +1,7 @@
 package vn.hoidanit.jobhunter.controller;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,9 +11,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.*;
 import vn.hoidanit.jobhunter.domain.User;
+import vn.hoidanit.jobhunter.domain.dto.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.service.UserService;
 import vn.hoidanit.jobhunter.util.error.IdInvalidException;
 
@@ -28,7 +32,7 @@ public class UserController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @PostMapping("users")
+    @PostMapping("/users")
     public ResponseEntity<User> createNewUser(
         @RequestBody User postmanUser 
         ) {
@@ -39,8 +43,8 @@ public class UserController {
     }
 
     
-    @DeleteMapping("users/{id}")
-    public ResponseEntity<String> createNewUser(
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<String> deleteAUser(
         @PathVariable("id") Long id
     ) throws IdInvalidException{
         if(id >= 1500){
@@ -50,7 +54,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body("Delete User Successfully");
     }
 
-    @GetMapping("users/{id}")
+    @GetMapping("/users/{id}")
     public ResponseEntity<User> readAUser(
         @PathVariable("id") Long id
     ){
@@ -58,17 +62,22 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(getUser);
     }
 
-    @GetMapping("users")
-    public ResponseEntity<List<User>> readAllUser() {
-        List<User> listAllUser = this.userService.handleGetAllUser();
-        return ResponseEntity.status(HttpStatus.OK).body(listAllUser);
+    @GetMapping("/users")
+    public ResponseEntity<ResultPaginationDTO> readAllUser(
+        @RequestParam("current") Optional<String> currentOptional,
+        @RequestParam("pageSize") Optional<String> pageSizeOptional
+    ) {
+        String sCurrent = currentOptional.isPresent() ? currentOptional.get() : "";
+        String sPageSize = pageSizeOptional.isPresent() ? pageSizeOptional.get() : "";
+        Pageable pageable = PageRequest.of(Integer.parseInt(sCurrent) - 1, Integer.parseInt(sPageSize));
+        // List<User> listAllUser = this.userService.handleGetAllUser();
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.handleGetAllUser(pageable));
     }
     
-    @PutMapping("users")
+    @PutMapping("/users")
     public ResponseEntity<String> updateAUser(@RequestBody User updateUser) {
         this.userService.handleUpdateUser(updateUser);
         return ResponseEntity.status(HttpStatus.OK).body("Update User successfully");
-        
     }
     
 }
