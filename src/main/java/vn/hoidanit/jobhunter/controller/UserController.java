@@ -18,8 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.turkraft.springfilter.boot.Filter;
 
+import jakarta.validation.Valid;
+
 import java.util.*;
 import vn.hoidanit.jobhunter.domain.User;
+import vn.hoidanit.jobhunter.domain.dto.ResCreateUserDTO;
+import vn.hoidanit.jobhunter.domain.dto.ResUpdateUserDTO;
 import vn.hoidanit.jobhunter.domain.dto.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.service.UserService;
 import vn.hoidanit.jobhunter.util.annotation.ApiMessage;
@@ -40,13 +44,19 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<User> createNewUser(
-        @RequestBody User postmanUser 
-        ) {
+    public ResponseEntity<ResCreateUserDTO> createNewUser(
+        @Valid @RequestBody User postmanUser        
+        ) throws IdInvalidException {
+            boolean isEmailExist = this.userService.isEmailExist(postmanUser.getEmail());
+            if(isEmailExist){
+                throw new IdInvalidException(
+                    "Email " +postmanUser.getEmail() + "is already exist, please using another email!!!"
+                );
+            }
             String encryptedPassword = passwordEncoder.encode(postmanUser.getPassword());
             postmanUser.setPassword(encryptedPassword);
         User createUser = this.userService.saveUser(postmanUser);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.convertToResCreateUserDTO(createUser));
     }
 
     
@@ -54,19 +64,23 @@ public class UserController {
     public ResponseEntity<String> deleteAUser(
         @PathVariable("id") Long id
     ) throws IdInvalidException{
-        if(id >= 1500){
-            throw new IdInvalidException("Id không lớn hơn hoặc bằng 100");
+        User currentUser = this.userService.handleGetAUser(id);
+        if(currentUser == null){
+            throw new IdInvalidException("Don't have User have id:" + id);
         }
         this.userService.handleDeleteUser(id);
         return ResponseEntity.status(HttpStatus.OK).body("Delete User Successfully");
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<User> readAUser(
+    public ResponseEntity<ResUpdateUserDTO> readAUser(
         @PathVariable("id") Long id
-    ){
-        User getUser = this.userService.handleGetAUser(id);
-        return ResponseEntity.status(HttpStatus.OK).body(getUser);
+    )throws IdInvalidException{
+        User currentUser = this.userService.handleGetAUser(id);
+        if(currentUser == null){
+            throw new IdInvalidException("Don't have User have id:" + id);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.convertToResUpdateUserDTO(currentUser));
     }
 
     @GetMapping("/users")
@@ -79,9 +93,14 @@ public class UserController {
     }
     
     @PutMapping("/users")
-    public ResponseEntity<String> updateAUser(@RequestBody User updateUser) {
-        this.userService.handleUpdateUser(updateUser);
-        return ResponseEntity.status(HttpStatus.OK).body("Update User successfully");
+    public ResponseEntity<ResUpdateUserDTO> updateAUser(@RequestBody User updateUser) 
+    throws IdInvalidException {
+        User currentUser = this.userService.handleUpdateUser(updateUser);
+        if(currentUser == null){
+            throw new IdInvalidException("Don't have User have id:" + updateUser.getId());
+        }
+        
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.convertToResUpdateUserDTO(currentUser));
     }
     
 }
