@@ -2,6 +2,8 @@ package vn.hoidanit.jobhunter.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.turkraft.springfilter.boot.Filter;
+
 import jakarta.validation.Valid;
 import vn.hoidanit.jobhunter.domain.Company;
 import vn.hoidanit.jobhunter.domain.User;
@@ -13,6 +15,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,20 +53,16 @@ public class CompanyController {
 
     @DeleteMapping("/companies/{id}")
     public ResponseEntity<String> deleteACompany (@PathVariable("id") Long id){
-        this.companyService.handleDeleteAComany(id);
+        this.companyService.handleDeleteACompany(id);
         return ResponseEntity.status(HttpStatus.OK).body("Delete company successfully!!!");
     }
     
     //sua
     @GetMapping("/companies")
     public ResponseEntity<ResultPaginationDTO> readAllCompany(
-        @RequestParam("current") Optional<String> currentOptional,
-        @RequestParam("pageSize") Optional<String> pageSizeOptional
+        @Filter Specification<Company> spec, Pageable pageable
     ) {
-        String sCurrent = currentOptional.isPresent() ? currentOptional.get() : "";
-        String sPageSize = pageSizeOptional.isPresent() ? pageSizeOptional.get() : "";
-        Pageable pageable = PageRequest.of(Integer.parseInt(sCurrent) - 1, Integer.parseInt(sPageSize));
-        return ResponseEntity.status(HttpStatus.OK).body(this.companyService.handleFindAllCompany(pageable));
+        return ResponseEntity.ok(this.companyService.handleFindAllCompany(spec, pageable));
     }
 
     @PutMapping("/companies")
