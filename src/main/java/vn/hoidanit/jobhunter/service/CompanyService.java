@@ -33,6 +33,13 @@ public class CompanyService {
         return null;
     }
 
+    public Boolean isCompanyExist(Long id){
+        if(id ==null){
+            return false;
+        }
+        return this.companyRepository.existsById(id);
+    }
+
     public ResultPaginationDTO handleFindAllCompany(Specification<Company> spec, Pageable pageable) {
         Page<Company> pCompany = this.companyRepository.findAll(spec, pageable);
         ResultPaginationDTO rs = new ResultPaginationDTO();

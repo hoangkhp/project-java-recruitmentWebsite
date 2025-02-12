@@ -25,6 +25,7 @@ import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.response.ResCreateUserDTO;
 import vn.hoidanit.jobhunter.domain.response.ResUpdateUserDTO;
 import vn.hoidanit.jobhunter.domain.response.ResultPaginationDTO;
+import vn.hoidanit.jobhunter.service.CompanyService;
 import vn.hoidanit.jobhunter.service.UserService;
 import vn.hoidanit.jobhunter.util.annotation.ApiMessage;
 import vn.hoidanit.jobhunter.util.error.IdInvalidException;
@@ -37,10 +38,12 @@ import vn.hoidanit.jobhunter.util.error.IdInvalidException;
 public class UserController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
+    private final CompanyService companyService;
     
-    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
+    public UserController(UserService userService, PasswordEncoder passwordEncoder, CompanyService companyService) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
+        this.companyService = companyService;
     }
 
     @PostMapping("/users")
@@ -51,6 +54,11 @@ public class UserController {
             if(isEmailExist){
                 throw new IdInvalidException(
                     "Email " +postmanUser.getEmail() + "is already exist, please using another email!!!"
+                );
+            }
+            if(this.companyService.isCompanyExist(postmanUser.getCompany().getId()) == false){
+                throw new IdInvalidException(
+                    "Company " +postmanUser.getCompany().getId() + "is not exist!!!"
                 );
             }
             String encryptedPassword = passwordEncoder.encode(postmanUser.getPassword());
