@@ -9,6 +9,7 @@ import vn.hoidanit.jobhunter.domain.Company;
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.response.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.service.CompanyService;
+import vn.hoidanit.jobhunter.util.annotation.ApiMessage;
 
 import java.util.List;
 import java.util.Optional;
@@ -70,4 +71,5 @@ public class CompanyController {
         this.companyService.handleUpdateACompany(updateCompany);
         return ResponseEntity.status(HttpStatus.OK).body("Update Company successfully");
     }
+
 }

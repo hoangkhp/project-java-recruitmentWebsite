@@ -70,4 +70,6 @@ public class CompanyService {
     public void handleDeleteACompany(Long id){
         this.companyRepository.deleteById(id);
     }
+
+    
 }
