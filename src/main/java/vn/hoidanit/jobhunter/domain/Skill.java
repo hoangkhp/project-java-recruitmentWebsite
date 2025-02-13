@@ -21,13 +21,13 @@ import lombok.Setter;
 import vn.hoidanit.jobhunter.util.SecurityUtil;
 
 @Entity
-@Table(name = "job")
+@Table(name = "skill")
 @Getter
 @Setter
 public class Skill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @NotBlank(message = "Don't leave this blank")
     private String name;
 

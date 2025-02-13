@@ -32,7 +32,7 @@ import vn.hoidanit.jobhunter.util.constant.LevelEnum;
 public class Job {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @NotBlank(message = "Don't leave this blank")
     private String name;
     @NotBlank(message = "Don't leave this blank")
