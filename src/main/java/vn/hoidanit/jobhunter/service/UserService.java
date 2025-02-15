@@ -87,8 +87,8 @@ public class UserService {
         }
         // check company
         if (userRequirement.getCompany() != null) {
-            Optional<Company> companyOptional = this.companyService.handleFindACompany(userRequirement.getCompany().getId());
-            userUpdate.setCompany(companyOptional.isPresent() ? companyOptional.get() : null);
+            Company companyOptional = this.companyService.handleFindACompany(userRequirement.getCompany().getId());
+            userUpdate.setCompany(companyOptional);
             }
             // check role
             if (userRequirement.getRole() != null) {

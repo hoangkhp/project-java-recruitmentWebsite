@@ -28,7 +28,7 @@ import vn.hoidanit.jobhunter.util.SecurityUtil;
 import vn.hoidanit.jobhunter.util.constant.LevelEnum;
 
 @Entity
-@Table(name = "job")
+@Table(name = "jobs")
 @Getter
 @Setter
 public class Job {

@@ -29,7 +29,8 @@ import vn.hoidanit.jobhunter.util.constant.GenderEnum;
 @Setter
 public class User {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     @NotBlank(message = "Need to add a email")

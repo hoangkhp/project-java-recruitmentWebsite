@@ -16,6 +16,7 @@ import lombok.Getter;
 import lombok.Setter;
 import vn.hoidanit.jobhunter.util.SecurityUtil;
 import vn.hoidanit.jobhunter.util.constant.ResumeStateEnum;
+
 @Entity
 @Table(name = "resumes")
 @Getter
@@ -23,7 +24,7 @@ import vn.hoidanit.jobhunter.util.constant.ResumeStateEnum;
 public class Resume {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @NotBlank(message = "Don't leave this blank")
     private String email;
     @NotBlank(message = "Don't leave this blank")

@@ -25,8 +25,12 @@ public class CompanyService {
         return this.companyRepository.save(company);
     }
 
-    public Optional<Company> handleFindACompany(Long id){
-        return this.companyRepository.findById(id);
+    public Company handleFindACompany(Long id){
+        Optional<Company> currentCompany = this.companyRepository.findById(id);
+        if(currentCompany.isPresent()){
+            return currentCompany.get();
+        }
+        return null;
         
     }
 
@@ -54,14 +58,13 @@ public class CompanyService {
     }
 
     public Company handleUpdateACompany(Company company){
-        Optional<Company> updateC = this.handleFindACompany(company.getId());
-        if (updateC.isPresent()){
-            Company currentCompany = updateC.get();
-            currentCompany.setLogo(company.getLogo());
-            currentCompany.setName(company.getName());
-            currentCompany.setDescription(company.getDescription());
-            currentCompany.setAddress(company.getAddress());
-            return this.companyRepository.save(currentCompany);
+        Company updateC = this.handleFindACompany(company.getId());
+        if (updateC !=null){
+            updateC.setLogo(company.getLogo());
+            updateC.setName(company.getName());
+            updateC.setDescription(company.getDescription());
+            updateC.setAddress(company.getAddress());
+            return this.companyRepository.save(updateC);
         }
         return null;
     }
