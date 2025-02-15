@@ -25,12 +25,9 @@ public class CompanyService {
         return this.companyRepository.save(company);
     }
 
-    public Company handleFindACompany(long id){
-        Optional<Company> c= this.companyRepository.findById(id);
-        if(c.isPresent()){
-            return c.get();
-        }
-        return null;
+    public Optional<Company> handleFindACompany(Long id){
+        return this.companyRepository.findById(id);
+        
     }
 
     public Boolean isCompanyExist(Long id){
@@ -57,14 +54,16 @@ public class CompanyService {
     }
 
     public Company handleUpdateACompany(Company company){
-        Company updateC = this.handleFindACompany(company.getId());
-        if (updateC != null){
-            updateC.setName(company.getName());
-            updateC.setDescription(company.getDescription());
-            updateC.setAddress(company.getAddress());
-            updateC.setLogo(company.getLogo());
+        Optional<Company> updateC = this.handleFindACompany(company.getId());
+        if (updateC.isPresent()){
+            Company currentCompany = updateC.get();
+            currentCompany.setLogo(company.getLogo());
+            currentCompany.setName(company.getName());
+            currentCompany.setDescription(company.getDescription());
+            currentCompany.setAddress(company.getAddress());
+            return this.companyRepository.save(currentCompany);
         }
-        return updateC;
+        return null;
     }
 
     public void handleDeleteACompany(Long id){

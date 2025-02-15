@@ -1,6 +1,9 @@
 package vn.hoidanit.jobhunter.domain;
 
 import java.time.Instant;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -46,6 +49,12 @@ public class User {
     private Instant updatedAt;
     private String createdBy;
     private String updatedBy;
+    @JsonIgnore
+    List<Resume> resumes;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
 
     @ManyToOne
     @JoinColumn(name = "company_id")

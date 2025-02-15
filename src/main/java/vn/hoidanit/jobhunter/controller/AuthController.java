@@ -62,7 +62,8 @@ public class AuthController {
             RestLoginDTO.UserLogin userLogin = new RestLoginDTO.UserLogin(
                     currentUserDB.getId(),
                     currentUserDB.getEmail(),
-                    currentUserDB.getName());
+                    currentUserDB.getName()
+                    currentUserDB.getRole());
             res.setUser(userLogin);
         }
 
@@ -106,6 +107,7 @@ public class AuthController {
             userLogin.setEmail(currentUserDB.getEmail());
             userLogin.setName(currentUserDB.getName());
             userGetAccount.setUser(userLogin);
+            userLogin.setRole(currentUserDB.getRole());
         }
 
         return ResponseEntity.ok().body(userGetAccount);
@@ -135,13 +137,13 @@ public class AuthController {
             RestLoginDTO.UserLogin userLogin = new RestLoginDTO.UserLogin(
                     currentUserDB.getId(),
                     currentUserDB.getEmail(),
-                    currentUserDB.getName());
+                    currentUserDB.getName()
+                    currentUserDB.getRole());
             res.setUser(userLogin);
         }
 
         // create access token
-        String access_token = this.securityUtil.createAccessToken(email, res.getUser());
-        res.setAccessToken(access_token);
+        String access_token = this.securityUtil.createAccessToken(email, res);
 
         // create refresh token
         String new_refresh_token = this.securityUtil.createRefreshToken(email, res);
